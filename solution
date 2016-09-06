@@ -1,0 +1,90 @@
+import java.util.Random;
+import java.util.Arrays;
+public class Cryptography {
+	
+	public static String caesarEncrypt(String originalMessage, int shift) {
+		int length= originalMessage.length();
+		String newMessage="";
+		for(int i=0; i<length;i++) {
+			char letter=(char)originalMessage.charAt(i);
+			if ((letter >='a') && (letter<= 'z')){
+				char shiftChar = (char)((letter - 'a'+shift)%26+ 'a');
+				//if shift is a negative number, then...
+				if (shiftChar < 'a') {
+					shiftChar = (char)('z'-'a'+shiftChar+1);
+				}
+				newMessage += shiftChar;
+			} else if (letter>='A'&& letter<='Z') {
+				char shiftChar = (char)((letter - 'A'+shift)%26+'A');
+				//if shift is a negative number, then...
+				if (shiftChar < 'A') {
+					shiftChar = (char)('Z'-'A'+shiftChar+1);
+				}
+				newMessage += shiftChar;
+			} else {
+			   newMessage += letter;
+			}
+		}
+		return newMessage;
+	}
+	
+	public static String caesarDecrypt(String encoded, int shift){
+		int shiftback=-shift;
+		String decoded=(caesarEncrypt(encoded,(shiftback)));
+		return decoded;
+	}
+	
+	public static String crackCipher(String encoded, int numberLetters) {
+		String temp="";
+		String decoded="";
+		int compare=0;
+		int highest=0;
+		for(int i=0;i<numberLetters;i++) {
+			temp=caesarDecrypt(encoded, i);
+			compare=SentenceChecker.countEnglishWords(temp);
+			if (compare>highest) {
+				highest=compare;
+				decoded=caesarDecrypt(encoded, i);
+			}
+		}
+		return decoded;
+	}
+	
+	public static void shuffle(char[] table) {
+		Random generator= new Random(12345);
+		int swapnumber=(int)Math.pow(table.length, 4);
+		for (int i=0; i<table.length; i++) {
+			int index1=generator.nextInt(table.length);
+			int index2=generator.nextInt(table.length);
+			char temp =table[index1];
+			table[index1]=table[index2];
+			table[index2]=temp;
+		}
+	}
+	// A-Z 65-90
+	public static char[] generatePermutation() {
+		char[] alphabet= new char[26];
+		for(int i=0; i<alphabet.length;i++) {
+			alphabet[i]=(char) (65+i);
+		}
+		shuffle(alphabet);
+		return alphabet;
+	}
+	
+	public static String permuteEncrypt(String input) {
+		char[] mapping= generatePermutation();
+		String encoded="";
+		input=input.toUpperCase();
+		for(int i=0; i<input.length();i++) {
+			char letter=(char)input.charAt(i);
+			
+			if ((letter<='Z')&&(letter>='A')) {
+				letter=mapping [letter-'A'];
+				encoded+=letter;
+			} else {
+				encoded+=letter;
+			}
+		}
+		return encoded;
+	}
+}
